@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>信息技术AI教学工具（Scratch/Flash）</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // 预设教学案例模板（贴合二/五年级教学目标）
+        const scratchTemplates = [
+            {
+                keyword: "小猫移动",
+                prompt: "二年级Scratch，让小猫从左到右移动，点击绿旗开始，移动到边缘后反弹",
+                blocks: [
+                    "当绿旗被点击",
+                    "重复执行",
+                    "    移动10步",
+                    "    如果碰到舞台边缘，就反弹"
+                ],
+                preview: "https://picsum.photos/id/237/800/400" // 示例图
+            },
+            {
+                keyword: "小猫说话",
+                prompt: "二年级Scratch，点击小猫，小猫说“你好！”2秒，同时切换造型",
+                blocks: [
+                    "当角色被点击",
+                    "说“你好！”2秒",
+                    "下一个造型"
+                ],
+                preview: "https://picsum.photos/id/1025/800/400"
+            },
+            {
+                keyword: "背景切换",
+                prompt: "二年级Scratch，按空格键切换背景，共3个背景循环切换",
+                blocks: [
+                    "当绿旗被点击",
+                    "重复执行",
+                    "    如果按下空格键，就下一个背景"
+                ],
+                preview: "https://picsum.photos/id/1041/800/400"
+            }
+        ];
+
+        const flashTemplates = [
+            {
+                keyword: "圆形移动",
+                prompt: "五年级Flash，制作圆形从左到右匀速移动的动画，时长2秒，帧频12fps",
+                steps: [
+                    "1. 新建Flash文档，设置舞台大小550x400",
+                    "2. 选择椭圆工具，按住Shift键绘制圆形",
+                    "3. 在时间轴第1帧选中圆形，设置X坐标0，Y坐标200",
+                    "4. 在第24帧插入关键帧，设置圆形X坐标550，Y坐标200",
+                    "5. 选中1-24帧，创建“动画补间”"
+                ],
+                preview: "https://picsum.photos/id/1035/800/400"
+            },
+            {
+                keyword: "形状补间",
+                prompt: "五年级Flash，制作正方形变成圆形的形状补间动画，时长1.5秒",
+                steps: [
+                    "1. 新建Flash文档，选择矩形工具绘制正方形（笔触颜色黑色，填充红色）",
+                    "2. 在时间轴第1帧选中正方形，右键转换为“形状”",
+                    "3. 在第18帧插入空白关键帧，绘制圆形（同正方形大小）",
+                    "4. 选中1-18帧，创建“形状补间”，设置缓动效果为“无”"
+                ],
+                preview: "https://picsum.photos/id/1039/800/400"
+            },
+            {
+                keyword: "元件动画",
+                prompt: "五年级Flash，制作按钮元件，点击时变色并放大",
+                steps: [
+                    "1. 新建“按钮”元件，命名为“我的按钮”",
+                    "2. 弹起帧：绘制蓝色矩形（100x50）",
+                    "3. 指针经过帧：插入关键帧，修改填充色为绿色",
+                    "4. 按下帧：插入关键帧，修改填充色为黄色，缩放比例110%",
+                    "5. 点击帧：插入关键帧，保持按下帧样式",
+                    "6. 返回场景，将按钮元件拖到舞台中央"
+                ],
+                preview: "https://picsum.photos/id/1062/800/400"
+            }
+        ];
+
+        // AI解析逻辑（模拟飞象的需求匹配）
+        function analyzeDemand() {
+            const grade = document.getElementById("grade").value;
+            const demand = document.getElementById("demand").value.trim();
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = "";
+
+            if (!demand) {
+                resultDiv.innerHTML = '<div class="text-red-500 text-center p-4">请输入教学需求（如“小猫移动”“圆形动画”）</div>';
+                return;
+            }
+
+            // 匹配对应年级的模板
+            let matched = null;
+            if (grade === "2") {
+                matched = scratchTemplates.find(t => demand.includes(t.keyword));
+                if (!matched) {
+                    // 无匹配时返回基础模板
+                    matched = {
+                        prompt: `二年级Scratch，${demand}`,
+                        blocks: [
+                            "当绿旗被点击",
+                            "重复执行",
+                            "    （根据需求添加动作积木，如移动、旋转、说话）",
+                            "    （可搭配事件积木：按下键盘、点击角色）"
+                        ],
+                        preview: "https://picsum.photos/id/1059/800/400"
+                    };
+                }
+                // 生成Scratch结果
+                resultDiv.innerHTML = `
+                    <div class="bg-white rounded-lg shadow p-6 mb-4">
+                        <h3 class="text-xl font-bold text-blue-600 mb-3">AI生成结果（二年级Scratch）</h3>
+                        <p class="text-gray-700 mb-3"><strong>需求解析：</strong>${matched.prompt}</p>
+                        <div class="bg-gray-50 p-4 rounded mb-3">
+                            <h4 class="font-semibold mb-2">Scratch积木组合：</h4>
+                            <ul class="list-disc list-inside text-gray-600">
+                                ${matched.blocks.map(block => `<li class="mb-1">${block}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="mb-3">
+                            <h4 class="font-semibold mb-2">效果预览：</h4>
+                            <img src="${matched.preview}" alt="Scratch效果预览" class="w-full h-48 object-cover rounded">
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onclick="exportResult('scratch')">导出积木截图</button>
+                            <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onclick="adjustResult()">调整细节</button>
+                        </div>
+                    </div>
+                `;
+            } else if (grade === "5") {
+                matched = flashTemplates.find(t => demand.includes(t.keyword));
+                if (!matched) {
+                    // 无匹配时返回基础模板
+                    matched = {
+                        prompt: `五年级Flash，${demand}`,
+                        steps: [
+                            "1. 新建Flash文档，设置舞台参数（大小、帧频）",
+                            "2. 绘制或导入动画元素（图形、文字、图片）",
+                            "3. 在时间轴插入关键帧，调整元素状态（位置、形状、颜色）",
+                            "4. 创建补间动画（动画补间/形状补间）",
+                            "5. 测试动画效果，导出为SWF或GIF"
+                        ],
+                        preview: "https://picsum.photos/id/1047/800/400"
+                    };
+                }
+                // 生成Flash结果
+                resultDiv.innerHTML = `
+                    <div class="bg-white rounded-lg shadow p-6 mb-4">
+                        <h3 class="text-xl font-bold text-orange-600 mb-3">AI生成结果（五年级Flash）</h3>
+                        <p class="text-gray-700 mb-3"><strong>需求解析：</strong>${matched.prompt}</p>
+                        <div class="bg-gray-50 p-4 rounded mb-3">
+                            <h4 class="font-semibold mb-2">Flash操作步骤：</h4>
+                            <ol class="list-decimal list-inside text-gray-600">
+                                ${matched.steps.map(step => `<li class="mb-2">${step}</li>`).join('')}
+                            </ol>
+                        </div>
+                        <div class="mb-3">
+                            <h4 class="font-semibold mb-2">效果预览：</h4>
+                            <img src="${matched.preview}" alt="Flash效果预览" class="w-full h-48 object-cover rounded">
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onclick="exportResult('flash')">导出操作指南</button>
+                            <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onclick="adjustResult()">调整细节</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // 导出功能（模拟下载）
+        function exportResult(type) {
+            alert(`已导出${type === 'scratch' ? 'Scratch积木截图' : 'Flash操作指南'}！实际使用时可保存页面或打印`);
+        }
+
+        // 调整细节功能（模拟飞象的多轮优化）
+        function adjustResult() {
+            const adjustText = prompt("请输入需要调整的细节（如“Scratch小猫移动速度变慢”“Flash动画时长改为3秒”）：");
+            if (adjustText) {
+                const resultDiv = document.getElementById("result");
+                const currentContent = resultDiv.innerHTML;
+                resultDiv.innerHTML = currentContent + `
+                    <div class="bg-yellow-50 p-3 rounded mt-3 border-l-4 border-yellow-400">
+                        <p class="text-gray-700"><strong>已调整：</strong>${adjustText}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 快速选择案例
+        function selectCase(grade, keyword) {
+            document.getElementById("grade").value = grade;
+            document.getElementById("demand").value = keyword;
+            analyzeDemand();
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8 max-w-5xl">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">信息技术AI教学工具</h1>
+        
+        <!-- 需求输入区 -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <div class="mb-4">
+                <label for="grade" class="block text-gray-700 font-semibold mb-2">选择年级</label>
+                <select id="grade" class="w-full p-2 border border-gray-300 rounded">
+                    <option value="2">二年级（Scratch图形化编程）</option>
+                    <option value="5">五年级（Flash动画制作）</option>
+                </select>
+            </div>
+            
+            <div class="mb-4">
+                <label for="demand" class="block text-gray-700 font-semibold mb-2">输入教学需求（如“小猫移动”“圆形动画”）</label>
+                <textarea id="demand" rows="3" class="w-full p-2 border border-gray-300 rounded" placeholder="示例：让小猫点击后说话并移动；制作正方形变圆形的Flash动画"></textarea>
+            </div>
+            
+            <div class="flex gap-3">
+                <button onclick="analyzeDemand()" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 flex-1">AI生成教学案例</button>
+                <button type="reset" class="bg-gray-300 text-gray-700 px-6 py-2 rounded hover:bg-gray-400">重置</button>
+            </div>
+            
+            <!-- 快速选择案例 -->
+            <div class="mt-4 pt-4 border-t border-gray-200">
+                <p class="text-gray-700 font-semibold mb-2">快速选择案例：</p>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="selectCase('2','小猫移动')" class="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm">Scratch-小猫移动</button>
+                    <button onclick="selectCase('2','小猫说话')" class="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm">Scratch-小猫说话</button>
+                    <button onclick="selectCase('5','圆形移动')" class="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm">Flash-圆形移动</button>
+                    <button onclick="selectCase('5','形状补间')" class="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm">Flash-形状补间</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 结果展示区 -->
+        <div id="result" class="min-h-[300px]">
+            <div class="text-center text-gray-500 py-12">
+                输入教学需求，点击"AI生成教学案例"获取结果
+            </div>
+        </div>
+        
+        <!-- 教学指引区 -->
+        <div class="bg-blue-50 rounded-lg p-6 mt-8">
+            <h3 class="text-xl font-bold text-blue-700 mb-3">教学使用指引</h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-2">
+                <li>二年级Scratch：生成的积木组合可直接用于课堂演示，引导学生拖拽对应积木复刻效果</li>
+                <li>五年级Flash：操作步骤按课堂教学节奏拆分，可配合投影逐步讲解，支持学生跟着步骤实操</li>
+                <li>调整细节：点击"调整细节"可修改动画速度、时长、积木逻辑等，适配不同教学场景</li>
+                <li>导出功能：可将结果打印或保存为图片，作为学生课后练习的参考资料</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
